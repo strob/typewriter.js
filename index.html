@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>instrument</title>
+    <script src="jquery-1.8.2.min.js"></script>
+    <script src="typewriter.js"></script>
+<style>
+body{
+  overflow:hidden;
+}
+</style>
+  </head>
+  <body>
+    <script>
+var lines = [];
+var line = new TW.TypedLine(80, 20, 20);
+lines.push(lines)
+
+var $hi = new TW.hidden_input(
+    function(key) {
+	line.onkey(key);
+    },
+    function(delta) {
+	line.onnav(delta);
+    },
+    function() {
+	line.onquit();
+	line = new TW.TypedLine(80, line.x, line.y+14);
+	lines.push(lines)
+	line.$el
+	    .appendTo($(document.body));
+    }
+);
+$hi
+    .appendTo($(document.body))
+    .focus();
+line.$el
+    .appendTo($(document.body));
+
+$(window)
+    .click(function(ev) {
+	var x = ev.clientX + document.body.scrollLeft;
+	var y = ev.clientY + document.body.scrollTop;
+	line.onquit();
+	line = new TW.TypedLine(80, x, y-12);
+	lines.push(lines)
+	line.$el
+	    .appendTo($(document.body));
+	$hi.focus();
+    });
+    </script>
+  </body>
+</html>
