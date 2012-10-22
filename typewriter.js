@@ -136,6 +136,8 @@ TW.Typewriter = function(parent) {
         .prependTo($parent);
     var lines = [];
 
+    var that = this;
+
     var $hi = TW.hidden_input(
         function(key) {
             lines[lines.length-1].onkey(key);
@@ -145,16 +147,11 @@ TW.Typewriter = function(parent) {
         },
         function() {
             var line = lines[lines.length-1];
-            line.onquit();
-            line = new TW.TypedLine(80, line.x, line.y+14);
-            lines.push(line);
-            line.$el
-                .appendTo($el);
+            that.newline(line.x, line.y+14);
         }
     ).appendTo($el);
 
     // Grab mouse clicks within the parent
-    var that = this;
     $parent
         .click(function(ev) {
 	        var x = ev.clientX + document.body.scrollLeft;
