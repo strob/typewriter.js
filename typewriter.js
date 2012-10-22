@@ -184,3 +184,20 @@ TW.Typewriter.prototype.newline = function(x,y) {
 	    .appendTo(this.$el);
 	this.$hi.focus();
 };
+
+TW.replay_typewriter = function(type) {
+    var $replay = $("<div>")
+        .css({position: "relative"});
+    var idx = 0;
+    var next = function() {
+        var line = type.lines[idx];
+        var $rline = TW.replay_line(line.state, line.timing, line.x, line.y)
+            .appendTo($replay);
+        idx += 1;
+        if(idx < type.lines.length) {
+            window.setTimeout(next, line.duration+100);
+        }
+    }
+    next();
+    return $replay;
+};

@@ -28,23 +28,8 @@ var $button = $("<button>")
     .click(function() { 
         // Hide the old lines
         type.$el.hide();
-        var $replay = $("<div>")
-            .css({position: "relative"})
+        TW.replay_typewriter(type)
             .insertBefore(type.$el);
-
-        console.log("replay", $replay);
-
-        var idx = 0;
-        var next = function() {
-            var line = type.lines[idx];
-            var $rline = TW.replay_line(line.state, line.timing, line.x, line.y)
-                .appendTo($replay);
-            idx += 1;
-            if(idx < type.lines.length) {
-                window.setTimeout(next, line.duration);
-            }
-        }
-        next();
     })
     .appendTo($("body"));
     </script>
