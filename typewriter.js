@@ -133,7 +133,7 @@ TW.Typewriter = function(parent) {
     var $parent = $(parent || "body");
     var $el = $("<div>", {class: "typewriter"})
         .css({position: "relative"})
-        .appendTo($parent);
+        .prependTo($parent);
     var lines = [];
 
     var $hi = TW.hidden_input(
