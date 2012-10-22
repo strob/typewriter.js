@@ -1,4 +1,4 @@
-var TW = {};
+var TW = {color: 'black'};
 TW.hidden_input = function(onkey, onnav, oncarriage) {
     var NAVIGATION = {
 	    8: -1,                  // 'delete'
@@ -46,12 +46,12 @@ TW.TypedLine = function(nchars, x, y) {
     this.$canvas = $("<canvas>")
     	.attr({width: nchars*this.SIZE, height: this.HEIGHT});
     this.ctx = this.$canvas[0].getContext('2d');
-    this.ctx.fillStyle = 'black;'
+    this.ctx.fillStyle = TW.color;
     this.ctx.font = 'bold ' + this.SIZE + 'px Courier';
 
     this.$cursor = $("<div>")
 	    .css({position: "absolute",
-	          backgroundColor: 'black',
+	          backgroundColor: TW.color,
 	          width: this.WIDTH,
 	          height: 3,
 	          left: 0,
