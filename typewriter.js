@@ -31,6 +31,9 @@ TW.hidden_input = function(onkey, onnav, oncarriage) {
     return $el;
 };
 TW.TypedLine = function(nchars, x, y) {
+    this.state = {};              // col -> "letters"
+    this.timing = {};             // timestamp -> col
+
     this.nchars = nchars;
     this.x = x;
     this.y = y;
@@ -64,6 +67,8 @@ TW.TypedLine = function(nchars, x, y) {
 };
 TW.TypedLine.prototype.onkey = function(key) {
     this.ctx.fillText(key, this.cursor*this.WIDTH, this.SIZE);
+    this.state[this.cursor] = (this.state[this.cursor] || '')  + key;
+    this.timing[new Date().getTime()] = this.cursor;
     this.onnav(1);
 };
 TW.TypedLine.prototype.onnav = function(delta) {
