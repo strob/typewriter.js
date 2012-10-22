@@ -34,6 +34,9 @@ TW.TypedLine = function(nchars, x, y) {
     this.state = {};              // col -> "letters"
     this.timing = {};             // timestamp -> col
 
+    // maintain a duration attribute.
+    this.duration = 0;
+
     this.nchars = nchars;
     this.x = x;
     this.y = y;
@@ -67,8 +70,14 @@ TW.TypedLine = function(nchars, x, y) {
 };
 TW.TypedLine.prototype.onkey = function(key) {
     this.ctx.fillText(key, this.cursor*this.WIDTH, this.SIZE);
+
+    var time = new Date().getTime();
+    if(!this._start) { this._start = time; }
+    else {this.duration = time - this._start; }
+
     this.state[this.cursor] = (this.state[this.cursor] || '')  + key;
-    this.timing[new Date().getTime()] = this.cursor;
+    this.timing[time] = this.cursor;
+
     this.onnav(1);
 };
 TW.TypedLine.prototype.onnav = function(delta) {
@@ -79,6 +88,45 @@ TW.TypedLine.prototype.onnav = function(delta) {
 };
 TW.TypedLine.prototype.onquit = function() {
     this.$cursor.css({display: "none"});
+};
+
+TW.replay_line = function(state, timing, x, y) {
+    var nchars = 0;
+    for(var col in state) {
+        var n = Number(col);
+        if (n > nchars) {
+            nchars = n;
+        }
+    }
+
+    var tline = new TW.TypedLine(nchars, x, y);
+    // don't display cursor
+    tline.onquit();
+
+    if(nchars == 0) { return tline.$el; }
+
+    // times = sorted(timing.keys()) # sometimes one wonders...
+    var times = [];
+    for(var time in timing) { times.push(Number(time)); }
+    times.sort();
+
+    // start 'er up!
+    var idx = 0;
+    var next = function() {
+        var col = timing[times[idx]];
+        var key = state[col].slice(0,1);
+        state[col] = state[col].slice(1);
+        tline.cursor = col;
+        tline.onkey(key)
+        idx += 1;
+        if(idx < times.length) {
+            // trigger next character after an appropriate timeout
+            window.setTimeout(next, times[idx]-times[idx-1]);
+        }
+    };
+    next();
+
+    return tline.$el;
 };
 
 TW.Typewriter = function(parent) {
