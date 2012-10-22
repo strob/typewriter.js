@@ -70,8 +70,64 @@ TW.TypedLine.prototype.onnav = function(delta) {
     this.cursor = Math.min(this.nchars-1,
 			               Math.max(0, this.cursor+delta));
 
-    this.$cursor.offset({left: this.x+(this.cursor)*this.WIDTH});
+    this.$cursor.css({left: (this.cursor)*this.WIDTH});
 };
 TW.TypedLine.prototype.onquit = function() {
     this.$cursor.css({display: "none"});
+};
+
+TW.Typewriter = function(parent) {
+    var $parent = $(parent || "body");
+    var $el = $("<div>", {class: "typewriter"})
+        .css({position: "relative"})
+        .appendTo($parent);
+    var lines = [];
+
+    var $hi = TW.hidden_input(
+        function(key) {
+            lines[lines.length-1].onkey(key);
+        },
+        function(delta) {
+            lines[lines.length-1].onnav(delta);
+        },
+        function() {
+            var line = lines[lines.length-1];
+            line.onquit();
+            line = new TW.TypedLine(80, line.x, line.y+14);
+            lines.push(line);
+            line.$el
+                .appendTo($el);
+        }
+    ).appendTo($el);
+
+    // Grab mouse clicks within the parent
+    var that = this;
+    $parent
+        .click(function(ev) {
+	        var x = ev.clientX + document.body.scrollLeft;
+	        var y = ev.clientY + document.body.scrollTop;
+            var pos = that.$parent.offset();
+            that.newline(x-pos.left, y-12-pos.top);
+        });
+
+    this.$parent = $parent;
+    this.$el = $el;
+    this.$hi = $hi;
+    this.lines = lines;
+
+    this.newline(20,20);
+};
+TW.Typewriter.prototype.newline = function(x,y) {
+    var line;
+    if(this.lines.length > 0) {
+        line = this.lines[this.lines.length-1];
+	    line.onquit();
+    }
+    // XXX: hardcoded 9 = 12 * 3 / 4
+    var nchars = Math.floor((this.$parent.width() - x) / 9);
+	line = new TW.TypedLine(nchars, x, y);
+	this.lines.push(line)
+	line.$el
+	    .appendTo(this.$el);
+	this.$hi.focus();
 };
