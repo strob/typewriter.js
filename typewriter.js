@@ -10,7 +10,7 @@ TW.hidden_input = function(onkey, onnav, oncarriage) {
     };
 
     var $el = $('<input>')
-	    .css({opacity: 0})
+	    .css({opacity: 0, position:"fixed"})
 	    .keydown(function(ev) {
 	        if(ev.keyCode in NAVIGATION) {
 		        onnav(NAVIGATION[ev.keyCode]);
